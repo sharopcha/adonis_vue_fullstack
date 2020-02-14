@@ -30,6 +30,19 @@ class ProjectController {
     await project.delete();
     return project;
   }
+
+  async update({ auth, request, params }) {
+    const user = await auth.getUser();
+    const { id } = params;
+    const project = await Project.find(id);
+    AuthService.verifyPermission(project, user);
+    project.merge(request.only("title"));
+
+    // const title = request.input("title");
+    // project.title = title;
+    await project.save();
+    return project;
+  }
 }
 
 module.exports = ProjectController;
